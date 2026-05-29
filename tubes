@@ -1,1 +1,688 @@
-aafafafaf
+package main
+
+import (
+	"fmt"
+)
+
+type dataDIri struct {
+	nama       string
+	pengalaman [5]string
+	skil       [12]string
+	pendidikan [2]string
+}
+
+type Lowongan struct {
+	ID, Gaji                    int
+	Posisi, Industri, Deskripsi string
+	SyaratSkill                 [4]string
+}
+
+type Nitip struct {
+	name, skill, pend, penga bool
+	pengalamanN, skilN       int
+}
+
+func main() {
+	var data dataDIri
+	var n string
+	var Nitip = Nitip{
+		name: true, skill: true, pend: true, penga: true,
+	}
+
+	BuatData(&data, &Nitip)
+	for n != "EXIT" {
+		tampilMenu()
+		fmt.Print("Pilih :")
+		fmt.Scan(&n)
+		switch n {
+		case "1":
+			Data(&data, &Nitip)
+		case "2":
+			cariLowongan()
+		case "3":
+			urutGaji()
+		case "6":
+			Buatsurat(data)
+		default:
+			n = "EXIT"
+			fmt.Print("EXIT")
+		}
+	}
+
+}
+
+// ============= INPUT DATA =================
+func Data(A *dataDIri, tes *Nitip) {
+	var t int
+	tampilDiri()
+	fmt.Print("Pilih: ")
+	fmt.Scan(&t)
+	switch t {
+	case 1:
+		fmt.Scanln()
+		A.nama = ""
+		A.skil = [12]string{}
+		BuatData(A, tes)
+	case 2:
+		Tampil(*A, *tes)
+	case 3:
+		ubah(A, tes)
+	}
+}
+
+// Tampil Data
+func Tampil(A dataDIri, n Nitip) { // Tampilkan Data
+	var i int
+	fmt.Printf(`
+======= Data Diri =======
+Nama       : %s
+Pengalaman : %d Kali
+Pendidikan : %s
+Skils      : `, A.nama, n.pengalamanN, A.pendidikan[0])
+	for i = 0; i < n.skilN; i++ {
+		fmt.Print(A.skil[i])
+		if i != n.skilN-1 {
+			fmt.Print(",")
+		}
+	}
+	fmt.Scanln()
+	fmt.Print("\n\nEnter :")
+	fmt.Scanln()
+} // Tampil Data
+
+// Ubah Data ===
+func ubah(A *dataDIri, tes *Nitip) { // Ubah Data
+	var a int
+	tes.name, tes.skill = false, false
+	tes.pend, tes.penga = false, false
+	fmt.Print(`
+===== Ubah Data =====
+1. Nama  3. Pendidikan
+2. Skill 4. Pengalaman
+else |batal| Ubah data apa? :`)
+	fmt.Scan(&a)
+	switch a {
+	case 1:
+		fmt.Scanln()
+		tes.name = true
+		BuatData(A, tes)
+	case 2:
+		tes.skill = true
+		fmt.Print("\nMau ubah semua/engga/tambah/hapus data?\n(y/x/t/h) :")
+		milih(A, tes)
+	case 3:
+		tes.pend = true
+		fmt.Print("\nMau ubah semua/engga data?\n(y/x) :")
+		milih(A, tes)
+	case 4:
+		tes.penga = true
+		fmt.Print("\nMau ubah semua/engga/tambah/hapus data?\n(y/x/t/h) :")
+		milih(A, tes)
+	}
+	tes.name, tes.skill = true, true
+	tes.pend, tes.penga = true, true
+}
+
+func milih(A *dataDIri, tes *Nitip) { // alat bantu buat fungsi ubah
+	var cek string
+	fmt.Scan(&cek)
+	fmt.Scanln()
+	switch cek {
+	case "y":
+		BuatData(A, tes)
+	case "x":
+		cariUbah(A, tes)
+	case "t":
+		tambah(A, tes)
+	case "h":
+		Hapus(A, tes)
+	}
+}
+
+func cariUbah(A *dataDIri, tes *Nitip) {
+	var i, n int
+	var ubah string
+	if tes.penga { // Pengalaman
+		fmt.Println("\n=== Pengalaman ===")
+		for i = 0; i < tes.pengalamanN; i++ {
+			fmt.Printf("%d. %s\n", i+1, A.pengalaman[i])
+		}
+		fmt.Print("Pilih : ")
+		fmt.Scan(&n)
+		for n > tes.pengalamanN {
+			fmt.Println("Harus pilih yang ada di pilihan..")
+			fmt.Scan(&n)
+		}
+		fmt.Print("\nUbah :")
+		fmt.Scanln()
+		A.pengalaman[n-1] = Input()
+
+	} else if tes.pend { // Pendidikan
+		fmt.Println("\n=== Pendidikan ===")
+		for i = 0; i < 2; i++ {
+			fmt.Printf("%d. %s\n", i+1, A.pendidikan[i])
+		}
+		fmt.Print("Pilih : ")
+		fmt.Scan(&n)
+		for n > 2 {
+			fmt.Println("Harus pilih yang ada di pilihan..")
+			fmt.Scan(&n)
+		}
+		fmt.Scanln()
+		fmt.Print("==== SMA/S1/S2 ====\nUbah :")
+		for {
+			ubah = Input()
+			if cekpend(ubah) {
+				A.pendidikan[n-1] = ubah
+				break
+			}
+		}
+	} else if tes.skill { // Skill
+		var er error
+		var f int
+		var listskill [12]string = getListSkill()
+		fmt.Println("\n=== Skils ===")
+		for i = 0; i < tes.skilN; i++ {
+			fmt.Printf("%d. %s\n", i+1, A.skil[i])
+		}
+		fmt.Print("\nPilih : ")
+		fmt.Scan(&n)
+		for n > tes.skilN {
+			fmt.Println("Harus pilih yang ada di pilihan..")
+			fmt.Scan(&n)
+		}
+		er = nil
+		listSkill()
+		for {
+			fmt.Print("Pilih : ")
+			_, er = fmt.Scan(&f)
+			if er == nil && f >= 0 && f <= 12 {
+				A.skil[n-1] = listskill[f-1]
+				break
+			}
+			fmt.Println("Harus pilih yang ada di pilihan..\n")
+		}
+		fmt.Scanln()
+	}
+	fmt.Print("\nSelesai ✅, Enter :")
+	fmt.Scanln()
+}
+
+func Hapus(A *dataDIri, tes *Nitip) {
+	var i, n int
+	if tes.penga { // Pengalaman
+		fmt.Println("\n=== Pengalaman ===")
+		for i = 0; i < tes.pengalamanN; i++ {
+			fmt.Printf("%d. %s\n", i+1, A.pengalaman[i])
+		}
+		fmt.Print("Pilih : ")
+		fmt.Scan(&n)
+		for n > tes.pengalamanN {
+			fmt.Println("Harus pilih yang ada di pilihan..")
+			fmt.Scan(&n)
+		}
+		for i = (n - 1); i < (tes.pengalamanN - 1); i++ {
+			A.pengalaman[i] = A.pengalaman[i+1]
+		}
+		tes.pengalamanN--
+	} else if tes.skill { // Skill
+		fmt.Println("\n=== Skils ===")
+		for i = 0; i < tes.skilN; i++ {
+			fmt.Printf("%d. %s\n", i+1, A.skil[i])
+		}
+		fmt.Print("\nPilih : ")
+		fmt.Scan(&n)
+		for n > tes.skilN {
+			fmt.Println("Harus pilih yang ada di pilihan..")
+			fmt.Scan(&n)
+		}
+		for i = (n - 1); i < (tes.skilN - 1); i++ {
+			A.skil[i] = A.skil[i+1]
+		}
+		tes.skilN--
+	}
+	fmt.Scanln()
+	fmt.Print("\nSelesai ✅, Enter :")
+	fmt.Scanln()
+}
+
+func tambah(A *dataDIri, tes *Nitip) {
+	var n, i, Nfinal int
+	var masukan string
+	if tes.penga {
+		fmt.Printf("Tambah berapa(%d [max 5])?", tes.pengalamanN)
+		fmt.Scan(&n)
+		fmt.Scanln()
+		Nfinal = tes.pengalamanN + n
+		if Nfinal > 5 {
+			Nfinal = 5
+		}
+		for i = tes.pengalamanN; i < Nfinal; i++ {
+			masukan = Input()
+			A.pengalaman[i] = masukan
+		}
+		tes.pengalamanN = Nfinal
+	} else if tes.skill {
+		var cekdata int = -1
+		var er error
+		var listskill [12]string = getListSkill()
+		i = tes.skilN
+		listSkill()
+		fmt.Print("\n(Berhenti di 0,Contoh 1 4 5 0) \nJika format/angka tidak sesuai tidak tebaca\nPilih :")
+		for {
+			er = nil
+			_, er = fmt.Scan(&cekdata)
+			if cekdata == 0 {
+				break
+			}
+			if er == nil && cekdata >= 0 && cekdata <= 12 {
+				A.skil[i] = listskill[cekdata-1]
+				tes.skilN++
+				i++
+			}
+		}
+		fmt.Scanln()
+	}
+	fmt.Print("\nSelesai ✅, Enter :")
+	fmt.Scanln()
+}
+
+// ============= INPUT DATA =================
+// ============= Cari Lowongan ==============
+func cariLowongan() {
+	var pilih, idCari int
+	var kata string
+	clear()
+	fmt.Println(`===== Cari Lowongan Pekerjaan =====
+1. Berdasarkan Industri
+2. Berdasarkan ID Lowongan
+Else : Batal
+`)
+	fmt.Print("Pilih (1/2): ")
+
+	fmt.Scan(&pilih)
+	fmt.Scanln()
+
+	switch pilih {
+	case 1:
+		fmt.Println(`===== Industri =====
+Teknologi   E-Commerce   Pendidikan
+      Keuangan      Kesehatan
+`)
+		kata = Input()
+		CariSequential(kata)
+	case 2:
+		fmt.Print("Masukkan ID Lowongan yang dicari (1-10): ")
+		fmt.Scan(&idCari)
+		fmt.Scanln()
+		CariBinary(idCari)
+	}
+}
+
+func CariSequential(kata string) { // Kata Kunci industri (Sequential Search)
+	var ketemu bool = false
+	var i int
+
+	fmt.Printf("\n=== Hasil Pencarian Industri: %s ===\n", kata)
+	for i = 0; i < 10; i++ {
+		if daftarLowongan[i].Industri == kata {
+			fmt.Printf("- ID: %d | %s | Rp%d\n",
+				daftarLowongan[i].ID, daftarLowongan[i].Posisi, daftarLowongan[i].Gaji)
+			ketemu = true
+		}
+	}
+	if !ketemu {
+		fmt.Println("Tidak ada lowongan di industri tersebut.")
+	}
+	fmt.Print("\nSelesai ✅, Enter :")
+	fmt.Scanln()
+}
+
+func CariBinary(id int) { // Id lowongan (Binary Search)
+	var kiri, kanan, tengah, i int
+	var ketemu bool = false
+	kiri = 0
+	kanan = 9
+	fmt.Printf("\n=== Mencari Lowongan dengan ID %d ===\n", id)
+
+	for kiri <= kanan && !ketemu {
+		tengah = (kiri + kanan) / 2
+		if daftarLowongan[tengah].ID == id {
+			ketemu = true
+		} else if daftarLowongan[tengah].ID < id {
+			kiri = tengah + 1
+		} else {
+			kanan = tengah - 1
+		}
+	}
+
+	if ketemu {
+		fmt.Printf(`✅ Lowongan Ditemukan!
+Posisi    : %s
+Industri  : %s
+Gaji      : Rp %d
+Deskripsi : %s
+`, daftarLowongan[tengah].Posisi, daftarLowongan[tengah].Industri,
+			daftarLowongan[tengah].Gaji, daftarLowongan[tengah].Deskripsi)
+
+		fmt.Print("Syarat    : ")
+		for i = 0; i < 4; i++ {
+			if daftarLowongan[tengah].SyaratSkill[i] != "" {
+				fmt.Printf("[%s] ", daftarLowongan[tengah].SyaratSkill[i])
+			}
+		}
+		fmt.Println()
+	} else {
+		fmt.Println("ID Lowongan tidak ditemukan. ❌ :|")
+	}
+
+	fmt.Print("\nSelesai ✅, Enter :")
+	fmt.Scanln()
+}
+
+func urutGaji() {
+	var pilih int
+	var urutlowongan [10]Lowongan
+	clear()
+	fmt.Println(`=== Urutkan Lowongan Berdasarkan Gaji ===
+1. Terkecil ke Terbesar (Ascending)
+2. Terbesar ke Terkecil (Descending)
+Else : Batal
+`)
+	fmt.Print("Pilih (1/2): ")
+	fmt.Scan(&pilih)
+
+	fmt.Scanln() 
+	switch pilih{
+	case 1:
+		SelectionSortGaji(&urutlowongan, true) 
+		fmt.Println("\n✅ Berhasil diurutkan (Terkecil - Terbesar).")
+	case 2:
+		SelectionSortGaji(&urutlowongan, false) 
+		fmt.Println("\n✅ Berhasil diurutkan (Terbesar - Terkecil).")
+	}
+	
+	TampilHasil(urutlowongan)
+}
+
+func SelectionSortGaji(Low *[10]Lowongan, kecil bool) {
+	var i, j, idx int
+	var temp Lowongan
+
+	for i = 0; i < 9; i++ {
+		idx = i
+		for j = i + 1; j < 10; j++ {
+			if kecil {
+				if Low[j].Gaji < Low[idx].Gaji {
+					idx = j
+				}
+			} else {
+				if Low[j].Gaji > Low[idx].Gaji {
+					idx = j
+				}
+			}
+		}
+		temp = Low[i]
+		Low[i] = Low[idx]
+		Low[idx] = temp
+	}
+}
+
+func TampilHasil(arr [10]Lowongan) {
+	var i int
+	fmt.Println("=================================================================")
+	fmt.Printf("%-3s | %-22s | %-12s | %-12s\n", "ID", "Posisi", "Industri", "Gaji")
+	fmt.Println("=================================================================")
+	for i = 0; i < 10; i++ {
+		fmt.Printf("%-3d | %-22s | %-12s | Rp%-10d\n", arr[i].ID, arr[i].Posisi, arr[i].Industri, arr[i].Gaji)
+	}
+	fmt.Println("=================================================================")
+	fmt.Print("\nSelesai ✅, Enter untuk kembali :")
+	fmt.Scanln()
+}
+
+func UrutCocok() {
+	fmt.Print("")
+}
+
+func evalAI() {
+	fmt.Print("")
+}
+
+func Buatsurat(A dataDIri) {
+	var a int
+	fmt.Print(A.nama)
+	fmt.Scan(&a)
+}
+
+// ====== Buat Data =======
+func BuatData(A *dataDIri, tes *Nitip) {
+	var er error
+
+	fmt.Println("===== Membuat Data Diri ======")
+	if tes.name { // Input Nama
+		fmt.Print("Nama : ")
+		A.nama = Input()
+	}
+
+	if tes.penga { // Input Pengalaman
+		fmt.Print("Pengalaman ada berapa?(max 5):")
+		var i int
+		var input string
+		var n int
+		fmt.Scan(&n)
+		fmt.Scanln()
+		if n > 5 {
+			n = 5
+		}
+		for i = 0; i < n; i++ {
+			fmt.Printf("%d. ", i+1)
+			input = Input()
+			A.pengalaman[i] = input
+		}
+		tes.pengalamanN = n
+	}
+
+	if tes.pend { // Input Pendidikan
+		fmt.Println("Pendidikan terakhir di '1'(SMA/S1/S2) :")
+		var i int
+		var hasil string
+		for i < 2 {
+			fmt.Printf("%d. ", i+1)
+			hasil = Input()
+			if cekpend(hasil) {
+				A.pendidikan[i] = hasil
+				i++
+			}
+
+		}
+	}
+
+	if tes.skill { // Input Skill
+		var cekdata int = -1
+		var i int
+		var listskill [12]string = getListSkill()
+		tes.skilN = 0
+		listSkill()
+		fmt.Print("\n(Berhenti di 0,Contoh 1 4 5 0) \nJika format/angka tidak sesuai tidak tebaca\nPilih :")
+		for {
+			er = nil
+			_, er = fmt.Scan(&cekdata)
+			if cekdata == 0 {
+				break
+			}
+			if er == nil && cekdata >= 0 && cekdata <= 12 {
+				A.skil[i] = listskill[cekdata-1]
+				tes.skilN++
+				i++
+			}
+		}
+		fmt.Scanln()
+	}
+
+	fmt.Print("\nData berhasil disimpan ✅\nlanjut? Enter :")
+	fmt.Scanln()
+}
+
+var daftarLowongan = [10]Lowongan{
+	{
+		ID:          1,
+		Posisi:      "Data Scientist",
+		Industri:    "Teknologi",
+		Gaji:        15000000,
+		Deskripsi:   "Menganalisis data dalam skala besar dan membuat model prediktif untuk startup.",
+		SyaratSkill: [4]string{"Python", "Machine Learning", "Statistika", "SQL"},
+	}, {
+		ID:          2,
+		Posisi:      "Backend Engineer",
+		Industri:    "Keuangan",
+		Gaji:        12000000,
+		Deskripsi:   "Membangun dan memelihara API untuk aplikasi perbankan digital.",
+		SyaratSkill: [4]string{"Go", "SQL", "Docker", "Cloud"},
+	}, {
+		ID:          3,
+		Posisi:      "Frontend Developer",
+		Industri:    "E-Commerce",
+		Gaji:        10000000,
+		Deskripsi:   "Membuat antarmuka web toko online yang interaktif dan responsif.",
+		SyaratSkill: [4]string{"JavaScript", "UI/UX Design", "", ""},
+	}, {
+		ID:          4,
+		Posisi:      "DevOps Engineer",
+		Industri:    "Teknologi",
+		Gaji:        18000000,
+		Deskripsi:   "Mengelola infrastruktur server dan otomatisasi sistem deployment produk SaaS.",
+		SyaratSkill: [4]string{"Linux", "Docker", "Cloud", "Networking"},
+	}, {
+		ID:          5,
+		Posisi:      "Data Analyst",
+		Industri:    "E-Commerce",
+		Gaji:        8000000,
+		Deskripsi:   "Membuat laporan tren penjualan produk dan visualisasi data bisnis.",
+		SyaratSkill: [4]string{"Python", "SQL", "Statistika", ""},
+	}, {
+		ID:          6,
+		Posisi:      "AI Engineer",
+		Industri:    "Teknologi",
+		Gaji:        20000000,
+		Deskripsi:   "Mengembangkan model kecerdasan buatan untuk produk utama perusahaan.",
+		SyaratSkill: [4]string{"Python", "Machine Learning", "Cloud", ""},
+	}, {
+		ID:          7,
+		Posisi:      "System Administrator",
+		Industri:    "Pendidikan",
+		Gaji:        9000000,
+		Deskripsi:   "Menjaga server sistem informasi kampus dan konfigurasi jaringan lokal.",
+		SyaratSkill: [4]string{"Linux", "Networking", "Cloud", ""},
+	}, {
+		ID:          8,
+		Posisi:      "Fullstack Developer",
+		Industri:    "E-Commerce",
+		Gaji:        14000000,
+		Deskripsi:   "Mengembangkan fitur front-end dan back-end untuk platform marketplace.",
+		SyaratSkill: [4]string{"JavaScript", "Go", "SQL", ""},
+	}, {
+		ID:          9,
+		Posisi:      "Cloud Architect",
+		Industri:    "Kesehatan",
+		Gaji:        25000000,
+		Deskripsi:   "Merancang topologi komputasi awan yang aman untuk sistem rekam medis rumah sakit.",
+		SyaratSkill: [4]string{"Cloud", "Linux", "Networking", "Docker"},
+	}, {
+		ID:          10,
+		Posisi:      "Database Administrator",
+		Industri:    "Pendidikan",
+		Gaji:        13000000,
+		Deskripsi:   "Memastikan keamanan dan kecepatan query database untuk data akademik mahasiswa.",
+		SyaratSkill: [4]string{"SQL", "Linux", "Cloud", ""},
+	},
+}
+
+func getListSkill() [12]string {
+	return [12]string{
+		"Python",
+		"Linux",
+		"Docker",
+		"Java",
+		"JavaScript",
+		"Networking",
+		"SQL",
+		"Cloud",
+		"Go",
+		"Machine Learning",
+		"UI/UX Design",
+		"Statistika",
+	}
+}
+
+// ====== Buat Data =======
+
+func tampilMenu() {
+	clear()
+	fmt.Println(`=========== APLIKASI AI RESUME ===========
+1. Kelola Profil & Keterampilan
+2. Cari Lowongan
+3. Urutkan Lowongan berdasarkan Gaji
+4. Urutkan Lowongan berdasarkan Kecocokan
+5. Evaluasi AI pada Pekerjaan Pilihan
+6. Buat Surat Lamaran
+Else : Keluar
+==========================================`)
+}
+
+func tampilDiri() {
+	clear()
+	fmt.Println(
+		`======Data Diri======
+1. Riset
+2. Tampilkan
+3. Ubah
+4. Hapus
+=====================`)
+}
+
+func listSkill() {
+	fmt.Print(`
+========= List Skill =========
+1.Python      7.SQL
+2.Linux       8.Cloud
+3.Docker      9.Go
+4.Java       10.ML
+5.JavaScript 11.UI/UX Design
+6.Networking 12.Statistika
+==============================
+`)
+}
+
+func cekpend(hasil string) bool {
+	if len(hasil) >= 3 && hasil[:3] == "SMA" {
+		return true
+	} else if len(hasil) >= 2 && (hasil[:2] == "S1" || hasil[:2] == "S2") {
+		return true
+	} else {
+		fmt.Print("Opss harus pilih yang di opsi.. \n")
+		return false
+	}
+}
+
+func Input() string {
+	var result string
+	var char rune
+	var err error
+
+	for {
+		_, err = fmt.Scanf("%c", &char)
+
+		if err != nil || char == '\n' {
+			break
+		}
+		if char != '\r' {
+			result += string(char)
+		}
+	}
+	return result
+
+}
+func clear() {
+	fmt.Print("\033[H\033[2J\033[3J")
+}
