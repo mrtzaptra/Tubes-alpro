@@ -372,7 +372,7 @@ Industri  : %s
 Gaji      : Rp %d
 Deskripsi : %s
 `, daftarLowongan[tengah].Posisi, daftarLowongan[tengah].Industri,
-daftarLowongan[tengah].Gaji, daftarLowongan[tengah].Deskripsi)
+			daftarLowongan[tengah].Gaji, daftarLowongan[tengah].Deskripsi)
 
 		fmt.Print("Syarat    : ")
 		for i = 0; i < 4; i++ {
@@ -382,7 +382,7 @@ daftarLowongan[tengah].Gaji, daftarLowongan[tengah].Deskripsi)
 		}
 		fmt.Println()
 	} else {
-		fmt.Println("ID Lowongan tidak ditemukan. ❌ :|")
+		fmt.Println("ID Lowongan tidak ditemukan ❌ ")
 	}
 
 	fmt.Print("\nSelesai ✅, Enter :")
@@ -442,17 +442,16 @@ func TampilHasil(arr [10]Lowongan) {
 	fmt.Printf(`=================================================================
 %-3s | %-22s | %-12s | %-12s
 =================================================================`,
-"ID", "Posisi", "Industri", "Gaji")
-fmt.Println()
+		"ID", "Posisi", "Industri", "Gaji")
+	fmt.Println()
 	for i = 0; i < 10; i++ {
 		fmt.Printf("%-3d | %-22s | %-12s | Rp%-10d\n",
-		arr[i].ID, arr[i].Posisi, arr[i].Industri, arr[i].Gaji)
+			arr[i].ID, arr[i].Posisi, arr[i].Industri, arr[i].Gaji)
 	}
 	fmt.Print("=================================================================",
-	"\nSelesai ✅, Enter untuk kembali :")
+		"\nSelesai ✅, Enter untuk kembali :")
 	fmt.Scanln()
 }
-
 
 func UrutCocok(A dataDIri) { // urutkan berdasarkan kecocokan
 	var arrSkor [10]LowonganSkor
@@ -469,31 +468,22 @@ func UrutCocok(A dataDIri) { // urutkan berdasarkan kecocokan
 	fmt.Println("2. Kecocokan Tertinggi ke Terendah (Descending)")
 	fmt.Print("Pilih (1/2): ")
 
-	_, err := fmt.Scan(&pilihan)
-	if err != nil {
-		var buang string
-		fmt.Scan(&buang)
-		fmt.Scanln()
-		fmt.Println("❌ Input harus berupa angka!")
-		fmt.Print("Enter untuk kembali...")
-		fmt.Scanln()
-		return
-	}
+	fmt.Scan(&pilihan)
 	fmt.Scanln()
 
 	if pilihan == 1 {
 		InsertionSortCocok(&arrSkor, true) // Ascending
 		fmt.Println("\nBerhasil ✅, diurutkan (Terendah - Tertinggi).")
+		TampilSkor(arrSkor)
 	} else if pilihan == 2 {
 		InsertionSortCocok(&arrSkor, false) // Descending
 		fmt.Println("\nBerhasil, ✅  diurutkan (Tertinggi - Terendah).")
+		TampilSkor(arrSkor)
 	} else {
 		fmt.Println("Pilihan tidak valid.")
 		fmt.Print("Enter untuk kembali...")
 		fmt.Scanln()
-		return
 	}
-	TampilSkor(arrSkor)
 }
 
 func HitungSkor(L Lowongan, A dataDIri) int { // Hitung kecocokan
@@ -538,13 +528,13 @@ func TampilSkor(arr [10]LowonganSkor) {
 	var i int
 	fmt.Println(`=======================================================================
 %-3s | %-22s | %-12s | %-10s\n
-=======================================================================`, 
-"ID", "Posisi", "Industri", "Tingkat Kecocokan")
+=======================================================================`,
+		"ID", "Posisi", "Industri", "Tingkat Kecocokan")
 	for i = 0; i < 10; i++ {
 		fmt.Printf("%-3d | %-22s | %-12s | %d Skill Cocok\n", arr[i].Data.ID, arr[i].Data.Posisi, arr[i].Data.Industri, arr[i].Skor)
 	}
 	fmt.Print("=================================================================",
-	"\nSelesai ✅, Enter untuk kembali :")
+		"\nSelesai ✅, Enter untuk kembali :")
 	fmt.Scanln()
 }
 
@@ -552,7 +542,7 @@ func evalAI(A dataDIri) {
 	var id int
 	clear()
 	fmt.Print("=== Evaluasi AI pada Pekerjaan Pilihan ===",
-	"\nMasukkan ID Lowongan yang ingin dilamar (1-10):" )
+		"\nMasukkan ID Lowongan yang ingin dilamar (1-10):")
 
 	fmt.Scan(&id)
 	fmt.Scanln()
@@ -567,22 +557,19 @@ func evalAI(A dataDIri) {
 			ketemu = true
 		}
 	}
-
 	if !ketemu {
 		fmt.Println("Lowongan dengan ID tersebut tidak ditemukan ❌")
 		fmt.Print("Enter :")
 		fmt.Scanln()
-		return
+	} else {
+		BeriEvaluasi(A, target)
 	}
-
-	BeriEvaluasi(A, target)
 }
 
 func BeriEvaluasi(A dataDIri, L Lowongan) {
 	var matchCount, reqCount, persentase int
 	var missingSkills [4]string
-	var missIdx int
-	var i, j int
+	var missIdx, i, j int
 	var found bool
 
 	for i = 0; i < 4; i++ {
@@ -611,29 +598,27 @@ func BeriEvaluasi(A dataDIri, L Lowongan) {
 	}
 
 	clear()
-	fmt.Printf("=== RINGKASAN EVALUASI AI 🤖 ===\n")
-	fmt.Printf("Pelamar             : %s\n", A.nama)
-	fmt.Printf("Posisi yang dilamar : %s (%s)\n", L.Posisi, L.Industri)
-	fmt.Printf("Tingkat Kesesuaian  : %d%%\n", persentase)
+	fmt.Print("=== RINGKASAN EVALUASI AI 🤖 ===\n")
+	fmt.Printf("Pelamar             : %s\n, Posisi yang dilamar : %s (%s)\nTingkat Kesesuaian  : %d%%\n",
+		A.nama, L.Posisi, L.Industri, persentase)
 	fmt.Println("==================================\n")
 
 	fmt.Println("Pesan AI & Saran Perbaikan :")
 	if persentase == 100 {
-		fmt.Println("LUAR BIASA! Anda SANGAT COCOK dengan posisi ini 🌟")
-		fmt.Println("-> Saran Resume: Pertahankan! Pastikan pengalaman Anda menonjolkan semua skill yang disyaratkan.")
-		fmt.Println("-> Saran Surat Lamaran: Anda bisa langsung menggunakan fitur 'Buat Surat Lamaran' sekarang.")
+		fmt.Println("LUAR BIASA! Anda SANGAT COCOK dengan posisi ini 🌟",
+			"\n-> Saran Resume: Pertahankan! Pastikan pengalaman Anda menonjolkan semua skill yang disyaratkan",
+			"\n-> Saran Surat Lamaran: Anda bisa langsung menggunakan fitur 'Buat Surat Lamaran' sekarang")
 	} else if persentase >= 50 {
-		fmt.Println("Anda CUKUP COCOK, namun ada celah kompetensi 👍")
-		fmt.Print("-> Saran Perbaikan Resume: Sebaiknya Anda mulai mempelajari dan menambahkan skill berikut ke resume Anda: ")
+		fmt.Println("Anda CUKUP COCOK, namun ada celah kompetensi 👍",
+			"\n-> Saran Perbaikan Resume: Sebaiknya Anda mulai mempelajari dan menambahkan skill berikut ke resume Anda: ")
 		for i = 0; i < missIdx; i++ {
 			fmt.Printf("[%s] ", missingSkills[i])
 		}
-		fmt.Println()
-		fmt.Println("-> Saran Surat Lamaran: Di surat lamaran nanti, fokus ceritakan pengalaman problem-solving Anda untuk menutupi kekurangan skill teknis di atas.")
+		fmt.Println("\n-> Saran Surat Lamaran: Di surat lamaran nanti, fokus ceritakan pengalaman problem-solving Anda untuk menutupi kekurangan skill teknis di atas.")
 	} else {
-		fmt.Println("Anda KURANG COCOK dengan kriteria utama posisi ini 👍")
-		fmt.Println("-> Saran Perbaikan Resume: Resume Anda saat ini tidak akan lolos seleksi otomatis (ATS).")
-		fmt.Println("-> Langkah Lanjutan: Tunda mengirim surat lamaran. Fokuslah membangun portofolio dengan teknologi ini terlebih dahulu:")
+		fmt.Println("Anda KURANG COCOK dengan kriteria utama posisi ini 👍",
+			"\n-> Saran Perbaikan Resume: Resume Anda saat ini tidak akan lolos seleksi otomatis (ATS).",
+			"\n-> Langkah Lanjutan: Tunda mengirim surat lamaran. Fokuslah membangun portofolio dengan teknologi ini terlebih dahulu:")
 		for i = 0; i < missIdx; i++ {
 			fmt.Printf("   • %s\n", missingSkills[i])
 		}
@@ -646,23 +631,22 @@ func Buatsurat(A dataDIri) { // Membuat nyaaa
 	var pilihan int
 
 	clear()
-	fmt.Println("=== Menu Cetak Dokumen ===")
+	fmt.Println(`=== Menu Cetak Dokumen ===
+1. Cetak Resume Profesional
+2. Cetak Surat Lamaran Kerja
+Pilih dokumen yang ingin dicetak (1/2): `)
 
-	fmt.Println("1. Cetak Resume Profesional")
-	fmt.Println("2. Cetak Surat Lamaran Kerja")
-	fmt.Print("Pilih dokumen yang ingin dicetak (1/2): ")
-	
 	fmt.Scan(&pilihan)
 	fmt.Scanln()
 
-	switch pilihan{
+	switch pilihan {
 	case 1:
 		CetakResume(A)
 	case 2:
 		CetakSuratLamaran(A)
-	default: 
+	default:
 		fmt.Print("Pilihan tidak valid ❌",
-	"Enter untuk kembali :")
+			"Enter untuk kembali :")
 		fmt.Scanln()
 	}
 }
@@ -672,25 +656,23 @@ func CetakResume(A dataDIri) { // Resume
 	var adaPengalaman bool = false
 
 	clear()
-	fmt.Println("=========================================================")
-	fmt.Println("                  RESUME PROFESIONAL")
-	fmt.Println("=========================================================")
+	fmt.Println("=========================================================",
+		"\n                  RESUME PROFESIONAL",
+		"\n=========================================================")
 	fmt.Printf("Nama Lengkap : %s\n", A.nama)
-	
+
 	fmt.Print("Pendidikan   : ")
 	for i = 0; i < 2; i++ {
 		if A.pendidikan[i] != "" {
 			fmt.Printf("%s ", A.pendidikan[i])
 		}
 	}
-	
 	fmt.Println("\n\n[ KEAHLIAN / SKILL ]")
 	for i = 0; i < 12; i++ {
 		if A.skil[i] != "" {
 			fmt.Printf("- %s\n", A.skil[i])
 		}
 	}
-
 	fmt.Println("\n[ PENGALAMAN KERJA ]")
 	for i = 0; i < 5; i++ {
 		if A.pengalaman[i] != "" {
@@ -701,32 +683,20 @@ func CetakResume(A dataDIri) { // Resume
 	if !adaPengalaman {
 		fmt.Println("- Belum ada pengalaman kerja.")
 	}
-	fmt.Println("=========================================================")
-	fmt.Print("\nSelesai ✅, Enter untuk kembali ke menu utama :")
+	fmt.Print("=========================================================",
+		"\nSelesai ✅, Enter :")
 	fmt.Scanln()
 }
 
-// Subprogram 2: Cetak Surat Lamaran (Butuh Target Lowongan)
-func CetakSuratLamaran(A dataDIri) {
+func CetakSuratLamaran(A dataDIri) { // Surat Lamaran
 	var id, i int
 	var target Lowongan
 	var ketemu bool = false
 	var skillCount int = 0
 
 	fmt.Print("\nMasukkan ID Lowongan yang ingin dilamar (1-10): ")
-	_, err := fmt.Scan(&id)
-	if err != nil {
-		var buang string
-		fmt.Scan(&buang)
-		fmt.Scanln()
-		fmt.Println("❌ ID harus berupa angka!")
-		fmt.Print("Enter untuk kembali...")
-		fmt.Scanln()
-		return
-	}
 	fmt.Scanln()
 
-	// Pencarian lowongan tanpa statement 'break'
 	for i = 0; i < 10 && !ketemu; i++ {
 		if daftarLowongan[i].ID == id {
 			target = daftarLowongan[i]
@@ -735,52 +705,51 @@ func CetakSuratLamaran(A dataDIri) {
 	}
 
 	if !ketemu {
-		fmt.Println("❌ Lowongan tidak ditemukan.")
-		fmt.Print("Enter untuk kembali...")
+		fmt.Println("Lowongan tidak ditemukan ❌")
+		fmt.Print("Enter :")
 		fmt.Scanln()
-		return
-	}
-
-	clear()
-	fmt.Println("=========================================================")
-	fmt.Println("                  SURAT LAMARAN KERJA")
-	fmt.Println("=========================================================")
-	fmt.Printf("Kepada Yth.,\nHRD Manager - Perusahaan Sektor %s\nDi Tempat\n\n", target.Industri)
-	
-	fmt.Println("Dengan hormat,")
-	fmt.Printf("Berdasarkan informasi lowongan pekerjaan yang tersedia, saya yang bertanda tangan di bawah ini:\n")
-	fmt.Printf("Nama       : %s\n", A.nama)
-	if A.pendidikan[0] != "" {
-		fmt.Printf("Pendidikan : %s\n\n", A.pendidikan[0])
 	} else {
-		fmt.Printf("Pendidikan : -\n\n")
-	}
-	
-	fmt.Printf("Bermaksud melamar pekerjaan untuk menempati posisi sebagai %s.\n\n", target.Posisi)
-	
-	fmt.Print("Sebagai bahan pertimbangan, saya memiliki kompetensi yang relevan dengan kebutuhan posisi ini, di antaranya: ")
-	for i = 0; i < 12; i++ {
-		if A.skil[i] != "" {
-			if skillCount > 0 {
-				fmt.Print(", ")
-			}
-			fmt.Print(A.skil[i])
-			skillCount++
-		}
-	}
-	if skillCount == 0 {
-		fmt.Print("kemampuan adaptasi yang cepat dan kemauan belajar tinggi")
-	}
-	fmt.Println(".\n")
-	
-	fmt.Println("Saya adalah individu yang antusias dan siap berkontribusi secara maksimal untuk perusahaan Bapak/Ibu. Detail rekam jejak saya telah saya lampirkan pada resume.")
-	fmt.Println("\nBesar harapan saya untuk dapat mengikuti tahapan seleksi selanjutnya. Atas perhatiannya, saya ucapkan terima kasih.")
-	
-	fmt.Printf("\n\nHormat saya,\n\n\n( %s )\n", A.nama)
-	fmt.Println("=========================================================")
+		clear()
+		fmt.Println("=========================================================",
+			"\n                  SURAT LAMARAN KERJA",
+			"\n=========================================================")
+		fmt.Printf("Kepada Yth.,\nHRD Manager - Perusahaan Sektor %s\nDi Tempat\n\n", target.Industri)
 
-	fmt.Print("\nSelesai ✅, Enter untuk kembali ke menu utama :")
-	fmt.Scanln()
+		fmt.Println("Dengan hormat,")
+		fmt.Printf("Berdasarkan informasi lowongan pekerjaan yang tersedia, saya yang bertanda tangan di bawah ini:\n",
+		"Nama       : %s\n", A.nama)
+		if A.pendidikan[0] != "" {
+			fmt.Printf("Pendidikan : %s\n\n", A.pendidikan[0])
+		} else {
+			fmt.Printf("Pendidikan : -\n\n")
+		}
+
+		fmt.Printf("Bermaksud melamar pekerjaan untuk menempati posisi sebagai %s.\n\n", target.Posisi)
+
+		fmt.Print("Sebagai bahan pertimbangan, saya memiliki kompetensi yang relevan dengan kebutuhan posisi ini, di antaranya: ")
+		for i = 0; i < 12; i++ {
+			if A.skil[i] != "" {
+				if skillCount > 0 {
+					fmt.Print(", ")
+				}
+				fmt.Print(A.skil[i])
+				skillCount++
+			}
+		}
+		if skillCount == 0 {
+			fmt.Print("kemampuan adaptasi yang cepat dan kemauan belajar tinggi")
+		}
+		fmt.Println(".\n")
+
+		fmt.Println("Saya adalah individu yang antusias dan siap berkontribusi secara maksimal untuk perusahaan Bapak/Ibu. Detail rekam jejak saya telah saya lampirkan pada resume.")
+		fmt.Println("\nBesar harapan saya untuk dapat mengikuti tahapan seleksi selanjutnya. Atas perhatiannya, saya ucapkan terima kasih.")
+
+		fmt.Printf("\n\nHormat saya,\n\n\n( %s )\n", A.nama)
+		fmt.Println("=========================================================")
+
+		fmt.Print("\nSelesai ✅, Enter :")
+		fmt.Scanln()
+	}
 }
 
 // ====== Buat Data =======
