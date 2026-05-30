@@ -318,6 +318,7 @@ Else : Batal
 Teknologi   E-Commerce   Pendidikan
       Keuangan      Kesehatan
 `)
+		fmt.Print("Keyword :")
 		kata = Input()
 		CariSequential(kata)
 	case 2:
@@ -439,11 +440,9 @@ func SelectionSortGaji(Low *[10]Lowongan, kecil bool) {
 
 func TampilHasil(arr [10]Lowongan) {
 	var i int
-	fmt.Printf(`=================================================================
-%-3s | %-22s | %-12s | %-12s
-=================================================================`,
-		"ID", "Posisi", "Industri", "Gaji")
-	fmt.Println()
+	fmt.Println("=================================================================")
+	fmt.Printf("%-3s | %-22s | %-12s | %-12s\n", "ID", "Posisi", "Industri", "Gaji")
+	fmt.Println("=================================================================")
 	for i = 0; i < 10; i++ {
 		fmt.Printf("%-3d | %-22s | %-12s | Rp%-10d\n",
 			arr[i].ID, arr[i].Posisi, arr[i].Industri, arr[i].Gaji)
@@ -526,10 +525,9 @@ func InsertionSortCocok(arr *[10]LowonganSkor, asc bool) {
 
 func TampilSkor(arr [10]LowonganSkor) {
 	var i int
-	fmt.Println(`=======================================================================
-%-3s | %-22s | %-12s | %-10s\n
-=======================================================================`,
-		"ID", "Posisi", "Industri", "Tingkat Kecocokan")
+	fmt.Println("=======================================================================")
+	fmt.Printf("%-3s | %-22s | %-12s | %-10s\n", "ID", "Posisi", "Industri", "Tingkat Kecocokan")
+	fmt.Println("======================================================================")
 	for i = 0; i < 10; i++ {
 		fmt.Printf("%-3d | %-22s | %-12s | %d Skill Cocok\n", arr[i].Data.ID, arr[i].Data.Posisi, arr[i].Data.Industri, arr[i].Skor)
 	}
@@ -599,7 +597,7 @@ func BeriEvaluasi(A dataDIri, L Lowongan) {
 
 	clear()
 	fmt.Print("=== RINGKASAN EVALUASI AI 🤖 ===\n")
-	fmt.Printf("Pelamar             : %s\n, Posisi yang dilamar : %s (%s)\nTingkat Kesesuaian  : %d%%\n",
+	fmt.Printf("Pelamar             : %s\nPosisi yang dilamar : %s (%s)\nTingkat Kesesuaian  : %d%%\n",
 		A.nama, L.Posisi, L.Industri, persentase)
 	fmt.Println("==================================\n")
 
@@ -695,6 +693,7 @@ func CetakSuratLamaran(A dataDIri) { // Surat Lamaran
 	var skillCount int = 0
 
 	fmt.Print("\nMasukkan ID Lowongan yang ingin dilamar (1-10): ")
+	fmt.Scan(&id)
 	fmt.Scanln()
 
 	for i = 0; i < 10 && !ketemu; i++ {
@@ -716,8 +715,8 @@ func CetakSuratLamaran(A dataDIri) { // Surat Lamaran
 		fmt.Printf("Kepada Yth.,\nHRD Manager - Perusahaan Sektor %s\nDi Tempat\n\n", target.Industri)
 
 		fmt.Println("Dengan hormat,")
-		fmt.Printf("Berdasarkan informasi lowongan pekerjaan yang tersedia, saya yang bertanda tangan di bawah ini:\n",
-		"Nama       : %s\n", A.nama)
+		fmt.Println("Berdasarkan informasi lowongan pekerjaan yang tersedia, saya yang bertanda tangan di bawah ini:")
+		fmt.Printf("Nama       : %s\n", A.nama)
 		if A.pendidikan[0] != "" {
 			fmt.Printf("Pendidikan : %s\n\n", A.pendidikan[0])
 		} else {
